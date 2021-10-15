@@ -23,18 +23,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.brunobterra.notescompose.R
 import com.brunobterra.notescompose.ui.theme.*
+import com.brunobterra.notescompose.viewmodel.HomeViewModel
 
 @Composable
-fun HomeScreen(newNoteCallBack: () -> Unit) {
-
-    var selectedChipIndex by remember {
-        mutableStateOf(0)
-    }
-
-    val chipList =
-        listOf<String>("Android", "Android", "Android", "Android", "Android", "Android", "Android")
-
-    val notesList = listOf(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+fun HomeScreen(
+    homeViewModel: HomeViewModel,
+    newNoteCallBack: () -> Unit) {
 
     DefaultBackground {
 
@@ -83,13 +77,13 @@ fun HomeScreen(newNoteCallBack: () -> Unit) {
 
                 LazyRow(modifier = Modifier.fillMaxWidth()) {
 
-                    itemsIndexed(chipList) { i: Int, s: String ->
+                    itemsIndexed(homeViewModel.categoriesStateList) { i: Int, s: String ->
 
                         CategoryRow(
-                            selectedChipIndex = selectedChipIndex,
+                            selectedChipIndex = homeViewModel.selectedChipState.value,
                             currentChipIndex = i
                         ) {
-                            selectedChipIndex = i
+                            homeViewModel.selectedChipState.value = i
                         }
 
                     }
@@ -98,15 +92,13 @@ fun HomeScreen(newNoteCallBack: () -> Unit) {
 
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
 
-                    items(notesList) {
+                    items(homeViewModel.notesStateList) {
 
                         NoteRow()
 
                     }
 
                 }
-
-
             }
         }
 
