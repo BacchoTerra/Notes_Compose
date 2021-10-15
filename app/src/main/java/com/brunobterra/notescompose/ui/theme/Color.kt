@@ -20,3 +20,6 @@ val categoryNotSelectedForegroundColor = onSecondary
 
 val noteGradStartColor = Color(0xFF37364F)
 val noteGradEndColor = Color(0xFF474165)
+
+
+val hintTextColor = Color(0xFFBCBCCE)

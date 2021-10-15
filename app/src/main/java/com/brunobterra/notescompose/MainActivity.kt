@@ -8,14 +8,35 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.brunobterra.notescompose.composables.HomeScreen
+import com.brunobterra.notescompose.composables.NewNoteScreen
 import com.brunobterra.notescompose.ui.theme.NotesComposeTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
-            HomeScreen()
+            val navController = rememberNavController()
+
+            NavHost(navController = navController, startDestination = "home"){
+
+
+                composable("home"){
+                    HomeScreen {
+                        navController.navigate("new")
+                    }
+                }
+
+                composable("new"){
+                    NewNoteScreen()
+                }
+
+            }
+
         }
     }
 }

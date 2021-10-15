@@ -25,19 +25,7 @@ import com.brunobterra.notescompose.R
 import com.brunobterra.notescompose.ui.theme.*
 
 @Composable
-fun DefaultBackground(content: @Composable () -> Unit) {
-
-    NotesComposeTheme {
-
-        Surface(color = MaterialTheme.colors.background) {
-            content()
-        }
-    }
-}
-
-@Preview
-@Composable
-fun HomeScreen() {
+fun HomeScreen(newNoteCallBack: () -> Unit) {
 
     var selectedChipIndex by remember {
         mutableStateOf(0)
@@ -52,7 +40,7 @@ fun HomeScreen() {
 
         Scaffold(
             floatingActionButton = {
-                FloatingActionButton(onClick = { }) {
+                FloatingActionButton(onClick = { newNoteCallBack() }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_baseline_search_24),
                         contentDescription = "search"
