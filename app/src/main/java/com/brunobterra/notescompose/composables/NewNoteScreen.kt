@@ -1,9 +1,14 @@
 package com.brunobterra.notescompose.composables
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.rememberScrollableState
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -35,6 +40,10 @@ fun NewNoteScreen(
         mutableStateOf("")
     }
 
+    var noteCategoryState by rememberSaveable() {
+        mutableStateOf("")
+    }
+
     var titleErrorState by rememberSaveable {
         mutableStateOf(false)
     }
@@ -42,6 +51,8 @@ fun NewNoteScreen(
     var bodyErrorState by rememberSaveable {
         mutableStateOf(false)
     }
+
+    val scrollState = rememberScrollState()
 
     val focusManager = LocalFocusManager.current
 
@@ -59,7 +70,7 @@ fun NewNoteScreen(
                 color = MaterialTheme.colors.onBackground
             )
 
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             MainOutlinedTextField(
                 value = noteTitleState,
@@ -77,6 +88,25 @@ fun NewNoteScreen(
                 keyBoardActions = KeyboardActions(onNext = {
                     focusManager.moveFocus(FocusDirection.Down)
                 })
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            MainOutlinedTextField(
+                modifier = Modifier.fillMaxWidth(),
+                value = noteCategoryState,
+                hint = "Category (Optional)",
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Ascii,
+                    imeAction = ImeAction.Next
+                ),
+                keyBoardActions = KeyboardActions(onNext = {
+                    focusManager.moveFocus(FocusDirection.Down)
+                }),
+                onValueChange = {
+                    noteCategoryState = it
+                }
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -109,7 +139,7 @@ fun NewNoteScreen(
                 ),
                 onClick = {
 
-                    val note = Note(noteTitleState, noteBodyState, "testz")
+                    val note = Note(noteTitleState, noteBodyState, noteCategoryState)
 
                     if (notesViewModel.checkIfNoteCanBeSaved(note)) {
                         notesViewModel.insert(note)
