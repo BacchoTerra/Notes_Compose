@@ -1,6 +1,5 @@
 package com.brunobterra.notescompose.composables
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -15,19 +14,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.brunobterra.notescompose.R
+import com.brunobterra.notescompose.model.Note
 import com.brunobterra.notescompose.ui.theme.*
-import com.brunobterra.notescompose.viewmodel.HomeViewModel
+import com.brunobterra.notescompose.viewmodel.NotesViewModel
+import java.util.*
 
 @Composable
 fun HomeScreen(
-    homeViewModel: HomeViewModel,
+    notesViewModel: NotesViewModel,
     newNoteCallBack: () -> Unit) {
 
     DefaultBackground {
@@ -36,7 +35,7 @@ fun HomeScreen(
             floatingActionButton = {
                 FloatingActionButton(onClick = { newNoteCallBack() }) {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_search_24),
+                        painter = painterResource(id = R.drawable.ic_baseline_note_add_24),
                         contentDescription = "search"
                     )
                 }
@@ -63,38 +62,13 @@ fun HomeScreen(
                             .fillMaxWidth(.85f),
                         textAlign = TextAlign.Start
                     )
-
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_baseline_search_24),
-                        contentDescription = "Search",
-                        tint = MaterialTheme.colors.onBackground,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .align(Alignment.CenterVertically)
-                    )
-
-                }
-
-                LazyRow(modifier = Modifier.fillMaxWidth()) {
-
-                    itemsIndexed(homeViewModel.categoriesStateList) { i: Int, s: String ->
-
-                        CategoryRow(
-                            selectedChipIndex = homeViewModel.selectedChipState.value,
-                            currentChipIndex = i
-                        ) {
-                            homeViewModel.selectedChipState.value = i
-                        }
-
-                    }
-
                 }
 
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
 
-                    items(homeViewModel.notesStateList) {
+                    items(notesViewModel.notesStateList) {
 
-                        NoteRow()
+                        NoteRow(it)
 
                     }
 
@@ -108,25 +82,13 @@ fun HomeScreen(
 
 @Composable
 fun CategoryRow(
-    category: String = "Composable",
-    selectedChipIndex: Int,
-    currentChipIndex: Int,
-    onClick: () -> Unit
+    category: String = ""
 ) {
 
     Box(
         modifier = Modifier
-            .padding(8.dp)
             .clip(MaterialTheme.shapes.medium)
-            .background(
-                if (currentChipIndex == selectedChipIndex)
-                    categorySelectedBackgroundColor
-                else
-                    categoryNotSelectedBackgroundColor,
-            )
-            .clickable {
-                onClick()
-            }
+            .background(categorySelectedBackgroundColor)
             .padding(8.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -134,17 +96,20 @@ fun CategoryRow(
         Text(
             text = category,
             style = MaterialTheme.typography.caption,
-            color = if (currentChipIndex == selectedChipIndex)
-                categorySelectedForegroundColor
-            else
-                categoryNotSelectedForegroundColor
+            color = categorySelectedForegroundColor
         )
 
     }
 }
 
 @Composable
-fun NoteRow() {
+fun NoteRow(note:Note) {
+
+    val calendar = Calendar.getInstance()
+    calendar.timeInMillis = note.timestamp
+
+    val month = calendar.getDisplayName(Calendar.MONTH,Calendar.SHORT,Locale.getDefault())
+    val year = calendar.get(Calendar.YEAR)
 
     Column(
         modifier = Modifier
@@ -164,7 +129,7 @@ fun NoteRow() {
     ) {
 
         Text(
-            text = "Title",
+            text = note.title,
             style = MaterialTheme.typography.h6,
             color = onBackground,
             modifier = Modifier.fillMaxWidth(),
@@ -176,7 +141,7 @@ fun NoteRow() {
         Spacer(modifier = Modifier.height(18.dp))
 
         Text(
-            text = "This will be the very large message but it will have a maximum number of lines, and it will be elipsized at the end, i think 5 lines is enough for a good visualization. After this, the user will have to click to open the note and see the entire thing.",
+            text = note.body,
             style = MaterialTheme.typography.body2,
             color = onBackground,
             modifier = Modifier.fillMaxWidth(),
@@ -192,10 +157,10 @@ fun NoteRow() {
             horizontalArrangement = Arrangement.SpaceAround
         ) {
 
-            CategoryRow(selectedChipIndex = -1, currentChipIndex = -2) {}
+            CategoryRow(note.category)
 
             Text(
-                text = "Oct. 2021",
+                text = "$month. $year",
                 style = MaterialTheme.typography.caption,
                 color = onBackground,
                 modifier = Modifier

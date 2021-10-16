@@ -4,6 +4,8 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,6 +30,7 @@ fun MainOutlinedTextField(
     value: String,
     hint: String,
     singleLine : Boolean,
+    isError: Boolean = false,
     keyboardOptions: KeyboardOptions,
     keyBoardActions : KeyboardActions = KeyboardActions(),
     onValueChange: (String) -> Unit
@@ -55,7 +58,10 @@ fun MainOutlinedTextField(
         textStyle = MaterialTheme.typography.body2,
         singleLine = singleLine,
         keyboardOptions = keyboardOptions,
-        keyboardActions = keyBoardActions
+        keyboardActions = keyBoardActions,
+        isError = isError
+
+
 
     )
 

@@ -6,6 +6,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalFocusManager
@@ -13,20 +14,33 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.brunobterra.notescompose.model.Note
 import com.brunobterra.notescompose.ui.theme.hintTextColor
 import com.brunobterra.notescompose.ui.theme.secondaryColor
+import com.brunobterra.notescompose.viewmodel.NotesViewModel
 
 
-@Preview
 @Composable
-fun NewNoteScreen() {
+fun NewNoteScreen(
+    notesViewModel: NotesViewModel,
+    navController: NavController
+) {
 
-    var noteTitleState by remember {
+    var noteTitleState by rememberSaveable() {
         mutableStateOf("")
     }
 
-    var noteBodyState by remember {
+    var noteBodyState by rememberSaveable() {
         mutableStateOf("")
+    }
+
+    var titleErrorState by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    var bodyErrorState by rememberSaveable {
+        mutableStateOf(false)
     }
 
     val focusManager = LocalFocusManager.current
@@ -51,6 +65,7 @@ fun NewNoteScreen() {
                 value = noteTitleState,
                 hint = "Title",
                 singleLine = true,
+                isError = titleErrorState,
                 onValueChange = {
                     noteTitleState = it
                 },
@@ -70,6 +85,7 @@ fun NewNoteScreen() {
                 value = noteBodyState,
                 hint = "Body",
                 singleLine = false,
+                isError = bodyErrorState,
                 onValueChange = { noteBodyState = it },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -91,7 +107,19 @@ fun NewNoteScreen() {
                     backgroundColor = MaterialTheme.colors.secondary,
                     contentColor = MaterialTheme.colors.onSecondary
                 ),
-                onClick = { /*TODO*/ }
+                onClick = {
+
+                    val note = Note(noteTitleState, noteBodyState, "testz")
+
+                    if (notesViewModel.checkIfNoteCanBeSaved(note)) {
+                        notesViewModel.insert(note)
+                        navController.navigateUp()
+                    } else {
+                        titleErrorState = noteTitleState.isEmpty()
+                        bodyErrorState = noteBodyState.isEmpty()
+                    }
+
+                }
             ) {
                 Text(
                     text = "Salvar",
@@ -99,7 +127,6 @@ fun NewNoteScreen() {
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
             }
-
         }
 
     }
