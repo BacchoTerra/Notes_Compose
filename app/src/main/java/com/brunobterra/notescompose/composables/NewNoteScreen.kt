@@ -29,7 +29,7 @@ import com.brunobterra.notescompose.viewmodel.NotesViewModel
 @Composable
 fun NewNoteScreen(
     notesViewModel: NotesViewModel,
-    navController: NavController
+    navController: NavController,
 ) {
 
     var noteTitleState by rememberSaveable() {
@@ -62,6 +62,7 @@ fun NewNoteScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(16.dp)
+                .verticalScroll(scrollState)
         ) {
 
             Text(
@@ -119,7 +120,7 @@ fun NewNoteScreen(
                 onValueChange = { noteBodyState = it },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight(.5f),
+                    .height(150.dp),
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.None

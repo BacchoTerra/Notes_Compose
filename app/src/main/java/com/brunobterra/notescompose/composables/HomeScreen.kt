@@ -157,7 +157,9 @@ fun NoteRow(note:Note) {
             horizontalArrangement = Arrangement.SpaceAround
         ) {
 
-            CategoryRow(note.category)
+            if (note.category.isNotEmpty()){
+                CategoryRow(note.category)
+            }
 
             Text(
                 text = "$month. $year",

@@ -26,8 +26,6 @@ class MainActivity : ComponentActivity() {
             notesViewModel.updateNotesListState(it)
         }
 
-        notesViewModel.nuke()
-
         setContent {
             val navController = rememberNavController()
 
